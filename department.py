@@ -77,25 +77,5 @@ class DepartmentType(Enum):
     Administration = auto()
 
 
-class Software:
-    pass
-
-
-class Hardware:
-    pass
-
-
-class Employee:
-    pass
-
-
-class Specialist(Employee):
-    pass
-
-
-class Head(Employee):
-    pass
-
-
 class Position:
     pass
