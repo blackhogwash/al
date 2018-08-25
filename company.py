@@ -1,6 +1,8 @@
 import random
 from collections import deque
+import employees as e
 import department as d
+import resources as r
 import project as p
 
 
@@ -9,11 +11,11 @@ class Company:
         self.name = kwargs["name"]
         self.dept_count = random.randint(2, 6)
         self.empl_counts = [random.randint(3, 10) for _ in range(self.dept_count)]
-        self.employees = [d.Specialist() for _ in range(sum(self.empl_counts))] + [d.Head() for _ in range(self.dept_count)]
+        self.employees = [e.Specialist() for _ in range(sum(self.empl_counts))] + [e.Head() for _ in range(self.dept_count)]
         self.software_count = len(self.employees)
         self.hardware_count = len(self.employees)
-        self.software = [d.Software() for _ in range(self.software_count)]
-        self.hardware = [d.Hardware() for _ in range(self.hardware_count)]
+        self.software = [r.Software() for _ in range(self.software_count)]
+        self.hardware = [r.Hardware() for _ in range(self.hardware_count)]
         self.projects = []
 
         empl_queue = deque(self.employees)

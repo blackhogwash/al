@@ -1,7 +1,7 @@
 import random
 from collections import deque, defaultdict
 from enum import Enum, auto
-
+import time
 
 class TaskStatus(Enum):
     Open = auto()
@@ -34,7 +34,7 @@ class Project:
         # self.dept_types = list(DepartmentType)
         self.dept_types = list(self.company.depts)
         self.tasks = [Task("Name", random.choice(self.dept_types), random.randint(1, 30))
-                      for _ in range(random.randint(2, 10))]
+                      for _ in range(random.randint(4, 10))]
         self.count_tasks = len(self.tasks)
         self.tasks_by_dept_type = defaultdict(list)
         self.spec_by_dept_type = defaultdict(list)
@@ -98,34 +98,58 @@ class Project:
                 else:
                     self.assigned_tasks[task] = []
 
+    # def execute(self):
+    #     # self._sort_tasks_by_status(self.assigned_tasks)
+    #     # self.current_task = random.choice(self.assigned_tasks.keys())
+    #     for task in self.assigned_tasks:
+    #         while task.status != TaskStatus.Resolved:
+    #             if self.assigned_tasks[task]:
+    #                 if task.status == TaskStatus.Open:
+    #                     task.status = TaskStatus.InProgress
+    #                 elif task.status == TaskStatus.InProgress:
+    #                     task.status = TaskStatus.InDeployment
+    #                 elif task.status == TaskStatus.InDeployment:
+    #                     task.status = TaskStatus.Resolved
+    #                     self.free_specialists.extend(self.assigned_tasks[task])
+    #             else:
+    #                 if self.free_specialists:
+    #                     self.assigned_tasks[task].append(self.free_specialists.pop())
+
+
     def execute(self):
-        # self._sort_tasks_by_status(self.assigned_tasks)
-        # self.current_task = random.choice(self.assigned_tasks.keys())
+        count = 0
         for task in self.assigned_tasks:
+            count += 1
+            k = random.choice([True, False])
             while task.status != TaskStatus.Resolved:
                 if self.assigned_tasks[task]:
-                    if task.status == TaskStatus.Open:
-                        task.status = TaskStatus.InProgress
-                    elif task.status == TaskStatus.InProgress:
-                        task.status = TaskStatus.InDeployment
-                    elif task.status == TaskStatus.InDeployment:
-                        task.status = TaskStatus.Resolved
-                        self.free_specialists.extend(self.assigned_tasks[task])
+                    task.status = TaskStatus.Resolved
+                    if k:
+                        time.sleep(1)
+                        print('...', end='')
+                        print(' Task completed')
+                    self.free_specialists.extend(self.assigned_tasks[task])
                 else:
                     if self.free_specialists:
                         self.assigned_tasks[task].append(self.free_specialists.pop())
+            if not k or len(self.assigned_tasks) == count:
+                yield False
+        yield True
 
     def check_status(self):
         for task in self.assigned_tasks:
             if task.status == TaskStatus.Resolved:
                 self.count_resolved_tasks += 1
+
         if self.count_tasks == self.count_resolved_tasks:
             print("--Project ended!--")
             print("Count of resolved tasks:", self.count_resolved_tasks)
             self._end()
+
         else:
             print("--Project in progress--")
             print("Count of resolved tasks:", self.count_resolved_tasks)
+        self.count_resolved_tasks = 0
 
     def _end(self):
         self.status = ProjectStatus.Completed
